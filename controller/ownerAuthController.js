@@ -22,9 +22,6 @@ export const getUsers = async (req, res) => {
     }
 };
 
-/**
- * Register a new user (Owner, Clinic, or Admin) without OTP verification.
- */
 export const registerUserWithoutOTP = async (req, res) => {
     const { firstname, lastname, email, password, role } = req.body;
     console.log("User registration data received (without OTP):", req.body);
@@ -42,23 +39,21 @@ export const registerUserWithoutOTP = async (req, res) => {
 
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        // Directly register Clinics, Admins, and Owners (no OTP for these roles)
         const newUser = new User({
             firstname,
             lastname,
             email,
             password: hashedPassword,
             role,
-            isVerified: true, // Automatically verify Clinic and Admin roles
+            isVerified: true,
         });
 
         const savedUser = await newUser.save();
 
-        // Create Clinic entry if role is "clinic"
         if (role === "clinic") {
             const newClinic = new Clinic({
-                userId: savedUser._id,  // Associate clinic with the user
-                name: `${firstname} ${lastname}`, // Default name
+                userId: savedUser._id,
+                name: `${firstname} ${lastname}`,
                 email: savedUser.email,
                 contact_number: "",
                 address: "",
@@ -66,6 +61,20 @@ export const registerUserWithoutOTP = async (req, res) => {
             });
 
             await newClinic.save();
+        }
+
+        // 🐾 Create Owner entry if role is "owner"
+        if (role === "owner") {
+            const newOwner = new Owner({
+                userId: savedUser._id,
+                firstname: savedUser.firstname,
+                lastname: savedUser.lastname,
+                email: savedUser.email,
+                address: "",
+                phone: "",
+            });
+
+            await newOwner.save();
         }
 
         return res.status(201).json({ message: "User registered successfully!" });
@@ -161,7 +170,7 @@ export const verifyUserOTP = async (req, res) => {
         res.status(200).json({ message: "Account verified and registered successfully!" });
     } catch (error) {
         console.error("Error verifying OTP:", error);
-        res.status(500).json({ message: "Internal server error" });
+        res.status(500).json({ message: "" });
     }
 };
 
@@ -363,15 +372,20 @@ export const deleteUser = async (req, res) => {
             return res.status(404).json({ message: "User not found." });
         }
 
-        // Check if the user is associated with a clinic (for clinic role)
+        // Delete associated clinic if role is "clinic"
         if (user.role === "clinic") {
-            await Clinic.deleteOne({ userId: user._id });  // Delete associated clinic data
+            await Clinic.deleteOne({ userId: user._id });
         }
 
-        // Delete the user
+        // Delete associated owner if role is "owner"
+        if (user.role === "owner") {
+            await Owner.deleteOne({ userId: user._id });
+        }
+
+        // Delete the user itself
         await User.deleteOne({ _id: user._id });
 
-        return res.status(200).json({ message: "User deleted successfully." });
+        return res.status(200).json({ message: "User and associated data deleted successfully." });
     } catch (error) {
         console.error("Error deleting user:", error);
         res.status(500).json({ message: error.message });

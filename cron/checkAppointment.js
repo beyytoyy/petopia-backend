@@ -2,18 +2,19 @@ import cron from 'node-cron';
 import Appointment from '../model/Appointment.js';
 import sendReminder from '../utils/sendReminder.js';
 
-// Helper function to format time to 12-hour (AM/PM) without seconds
 function formatTo12Hour(timeString) {
   if (!timeString) {
     console.warn('No time string provided to formatTo12Hour');
     return 'Time not available'; // or handle it as you see fit
   }
-  
+
+  console.log('Formatting time:', timeString); // Log the value to see what's being passed
+
   const [hours, minutes] = timeString.split(':');
   const date = new Date();
   date.setHours(hours);
   date.setMinutes(minutes);
-  
+
   return date.toLocaleTimeString('en-US', {
     hour: 'numeric',
     minute: '2-digit',
@@ -41,21 +42,24 @@ cron.schedule('* * * * *', async () => {
     .populate('clinic_id', 'name'); // populate clinic name
 
     for (const appointment of oneDayAppointments) {
-      if (!appointment.owner_id?.email || !appointment.clinic_id?.name) {
-        continue;
+      if (!appointment.owner_id?.email || !appointment.clinic_id?.name || !appointment.startTime) {
+        console.warn('No start time for appointment', appointment);
+        continue; // Skip this appointment if there's no start time
       }
-
-      const startTime = appointment.startTime; // Ensure this field exists
+    
+      const startTime = appointment.startTime;
       await sendReminder({
         email: appointment.owner_id.email,
         petOwnerName: appointment.owner_id.name || 'Pet Owner',
         clinicName: appointment.clinic_id.name,
         date: appointment.date,
-        startTime: formatTo12Hour(startTime) // Check if startTime is defined
+        startTime: formatTo12Hour(startTime)
       });
+    
       appointment.hasSentOneDayReminder = true;
       await appointment.save();
     }
+    
     
     const fiveHoursAppointments = await Appointment.find({
       status: 'Confirmed',

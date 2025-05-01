@@ -49,13 +49,8 @@ export const sendOTPEmail = async (email, otp) => {
     }
 };
 
-export const sendAppointmentEmail = async (email, appointmentDetails, pdfBuffer) => {
+export const sendAppointmentEmail = async (email, appointmentDetails) => {
     try {
-        if (!pdfBuffer || pdfBuffer.length === 0) {
-            throw new Error("❌ PDF Buffer is empty or undefined!");
-        }
-
-        console.log("📩 Sending email with PDF attachment, size:", pdfBuffer.length, "bytes");
 
         const mailOptions = {
             from: process.env.EMAIL_USER,
@@ -74,13 +69,6 @@ export const sendAppointmentEmail = async (email, appointmentDetails, pdfBuffer)
                 <hr>
                 <p style="font-size: 12px; color: gray;">This is an automated message from Petopia. Please do not reply to this email.</p>
             `,
-            attachments: [
-                {
-                    filename: `appointment-${appointmentDetails.appointmentId}.pdf`,
-                    content: pdfBuffer, // Ensure proper passing of the buffer
-                    contentType: "application/pdf",
-                },
-            ],
         };
 
         const info = await transporter.sendMail(mailOptions);
