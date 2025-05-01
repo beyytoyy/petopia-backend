@@ -22,9 +22,8 @@ const appointmentSchema = new mongoose.Schema(
         otpExpires: { type: Date },
         isVerified: { type: Boolean, default: false },
 
-        // Reminder fields
-        hasSentOneDayReminder: { type: Boolean, default: false },
-        hasSentFiveHoursReminder: { type: Boolean, default: false },
+        reminder1DaySent: { type: Boolean, default: false },
+        reminder5HourSent: { type: Boolean, default: false },
     },
     { timestamps: true }
 );

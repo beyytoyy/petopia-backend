@@ -260,7 +260,7 @@ export const bookAppointment = async (req, res) => {
             pendingAppointments.set(email, {
                 firstName, lastName, email, phone,
                 pet: { name: petName, type: petType, breed: petBreed, gender: petGender, age: petAge },
-                clinic_id, date: new Date(date), service_id, vet_id, notes, otp, otpExpires
+                clinic_id, date: new Date(date), service_id, vet_id, notes, otp, otpExpires, medical_concern
             });
 
             // Send OTP
@@ -276,7 +276,7 @@ export const bookAppointment = async (req, res) => {
         const existingPet = await Pet.findOne({ 
             owner_id, 
             name: { $regex: new RegExp(`^${petName}$`, "i") }, // Case-insensitive
-            type: petType
+            type: petTypes
         });
         
         let petId;
