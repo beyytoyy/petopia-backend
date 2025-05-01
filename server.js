@@ -75,7 +75,7 @@ app.get("/auth/google", passport.authenticate("google", {
 app.get(
     "/auth/google/callback",
     passport.authenticate("google", { failureRedirect: "/auth/google/failure", session: false }),
-    async (req, res) => {  // ✅ Use async to allow database fetching
+    async (req, res) => {
         if (!req.user) {
             console.error("❌ Google authentication failed. No user found.");
             return res.redirect(`${process.env.FRONTEND_URL_VERCEL}/google-auth-failure?message=Authentication failed`);
@@ -90,7 +90,7 @@ app.get(
                 const owner = await OwnerModel.findOne({ userId: req.user._id });
                 if (owner) {
                     ownerId = owner._id;
-                    req.user.ownerId = owner._id;  // ✅ Attach to req.user
+                    req.user.ownerId = owner._id;  // Attach to req.user
                 }
             }
 
@@ -102,6 +102,8 @@ app.get(
                 process.env.JWT_SECRET,
                 { expiresIn: "1h" }
             );
+
+            console.log("Redirecting to:", `${process.env.FRONTEND_URL_VERCEL}/google-auth-success?token=${encodeURIComponent(token)}`);
 
             res.redirect(`${process.env.FRONTEND_URL_VERCEL}/google-auth-success?token=${encodeURIComponent(token)}`);
         } catch (error) {
