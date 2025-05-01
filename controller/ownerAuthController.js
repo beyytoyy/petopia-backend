@@ -159,6 +159,7 @@ export const verifyUserOTP = async (req, res) => {
                 firstname: savedUser.firstname,
                 lastname: savedUser.lastname,
                 email: savedUser.email,
+                avatar: `/images/owner-default.jpg`
             });
 
             await newOwner.save();

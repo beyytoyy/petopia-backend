@@ -9,7 +9,7 @@
         phone: String,
         pet_count: { type: Number, default: 0 },
         isGuest: { type: Boolean, default: false },
-        avatar: { type: String, default: 'images/owner-default.jpg', }
+        avatar: { type: String, default: '/images/owner-default.jpg', }
     }, );
 
     export default mongoose.model("Owner", OwnerSchema);
