@@ -56,7 +56,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 
-app.use(express.static(path.join(_dirname, 'client', 'build')));
+app.use(express.static(path.join(__dirname, 'client', 'build')));
 
 // Catch-all route to support React Router
 app.get('*', (req, res) => {
@@ -86,7 +86,7 @@ app.get(
     async (req, res) => {  // ✅ Use async to allow database fetching
         if (!req.user) {
             console.error("❌ Google authentication failed. No user found.");
-            return res.redirect("http://localhost:3000/google-auth-failure?message=Authentication failed");
+            return res.redirect(`${process.env.FRONTEND_URL_VERCEL}/google-auth-failure?message=Authentication failed`);
         }
 
         console.log("✅ User authenticated via Google:", req.user);
@@ -111,10 +111,49 @@ app.get(
                 { expiresIn: "1h" }
             );
 
-            res.redirect(`http://localhost:3000/google-auth-success?token=${encodeURIComponent(token)}`);
+            res.redirect(`${process.env.FRONTEND_URL_VERCEL}/google-auth-success?token=${encodeURIComponent(token)}`);
         } catch (error) {
             console.error("❌ Error fetching owner ID:", error);
-            return res.redirect("http://localhost:3000/google-auth-failure?message=Server error");
+            return res.redirect(`${process.env.FRONTEND_URL_VERCEL}/google-auth-failure?message=Server error`);
+        }
+    }
+);
+
+app.get(
+    "/auth/google/callback",
+    passport.authenticate("google", { failureRedirect: "/auth/google/failure", session: false }),
+    async (req, res) => {  // ✅ Use async to allow database fetching
+        if (!req.user) {
+            console.error("❌ Google authentication failed. No user found.");
+            return res.redirect(`${process.env.FRONTEND_URL}/google-auth-failure?message=Authentication failed`);
+        }
+
+        console.log("✅ User authenticated via Google:", req.user);
+
+        try {
+            // Fetch ownerId from DB if the user is an owner
+            let ownerId = null;
+            if (req.user.role === "owner") {
+                const owner = await OwnerModel.findOne({ userId: req.user._id });
+                if (owner) {
+                    ownerId = owner._id;
+                    req.user.ownerId = owner._id;  // ✅ Attach to req.user
+                }
+            }
+
+            console.log("✅ Owner authenticated via Google:", ownerId);
+
+            // Generate JWT with role and ownerId
+            const token = jwt.sign(
+                { id: req.user._id, role: req.user.role, ownerId: ownerId || null },
+                process.env.JWT_SECRET,
+                { expiresIn: "1h" }
+            );
+
+            res.redirect(`${process.env.FRONTEND_URL}/google-auth-success?token=${encodeURIComponent(token)}`);
+        } catch (error) {
+            console.error("❌ Error fetching owner ID:", error);
+            return res.redirect(`${process.env.FRONTEND_URL}/google-auth-failure?message=Server error`);
         }
     }
 );
@@ -122,7 +161,12 @@ app.get(
 
 // New failure route
 app.get("/auth/google/failure", (req, res) => {
-    res.redirect("http://localhost:3000/login?message=This email was registered manually. Please use email and password.");
+    res.redirect(`${process.env.FRONTEND_URL_VERCEL}/login?message=This email was registered manually. Please use email and password.`);
+});
+
+// New failure route
+app.get("/auth/google/failure", (req, res) => {
+    res.redirect(`${process.env.FRONTEND_URL}/login?message=This email was registered manually. Please use email and password.`);
 });
 
 // Error handling middleware
