@@ -9,7 +9,7 @@ import PetRoutes from "./route/petRoutes.js";
 import AppointmentRoutes from "./route/appointmentRoutes.js";
 import path from "path";
 import session from "express-session";
-import MongoStore from "connect-mongo"; // ✅ NEW
+import MongoStore from "connect-mongo";
 import passport from "passport";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
@@ -87,7 +87,7 @@ app.get("/auth/google", passport.authenticate("google", {
 
 app.get("/auth/google/callback", passport.authenticate("google", { failureRedirect: "/auth/google/failure", session: false }), async (req, res) => {
   if (!req.user) {
-    return res.redirect(`${process.env.FRONTEND_URL_VERCEL}/google-auth-failure?message=Authentication failed`);
+    return res.redirect(`${process.env.FRONTEND_URL}/google-auth-failure?message=Authentication failed`);
   }
 
   try {
@@ -105,16 +105,16 @@ app.get("/auth/google/callback", passport.authenticate("google", { failureRedire
       { expiresIn: "1h" }
     );
 
-    res.redirect(`${process.env.FRONTEND_URL_VERCEL}/google-auth-success?token=${encodeURIComponent(token)}`);
+    res.redirect(`${process.env.FRONTEND_URL}/google-auth-success?token=${encodeURIComponent(token)}`);
   } catch (error) {
     console.error("Google Auth Error:", error);
-    res.redirect(`${process.env.FRONTEND_URL_VERCEL}/google-auth-failure?message=Server error`);
+    res.redirect(`${process.env.FRONTEND_URL}/google-auth-failure?message=Server error`);
   }
 });
 
 // Google Auth Failure Route
 app.get("/auth/google/failure", (req, res) => {
-  res.redirect(`${process.env.FRONTEND_URL_VERCEL}/login?message=This email was registered manually. Please use email and password.`);
+  res.redirect(`${process.env.FRONTEND_URL}/login?message=This email was registered manually. Please use email and password.`);
 });
 
 // Error Handling Middleware
@@ -123,5 +123,5 @@ app.use((err, req, res, next) => {
   res.status(500).json({ message: "Internal Server Error" });
 });
 
-const PORT = process.env.PORT || 5001;
+const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
