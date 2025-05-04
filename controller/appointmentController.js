@@ -276,7 +276,7 @@ export const bookAppointment = async (req, res) => {
         const existingPet = await Pet.findOne({ 
             owner_id, 
             name: { $regex: new RegExp(`^${petName}$`, "i") }, // Case-insensitive
-            type: petTypes
+            type: petType
         });
         
         let petId;
