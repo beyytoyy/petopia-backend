@@ -1,8 +1,8 @@
 import cron from 'node-cron';
-import sendAppointmentReminders from '../reminder.js'; // Adjust the path as necessary
+import { sendAppointmentReminders } from '../reminder.js';
 
-// Schedule the job to run every hour
+// Schedule to run every hour
 cron.schedule('0 * * * *', () => {
-    console.log('Checking for upcoming appointments...');
-    sendAppointmentReminders();
+  console.log('⏰ Cron triggered: checking appointments...');
+  sendAppointmentReminders();
 });

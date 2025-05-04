@@ -49,9 +49,8 @@ export const sendOTPEmail = async (email, otp) => {
     }
 };
 
-export const sendAppointmentEmail = async (email, appointmentDetails) => {
+export const sendAppointmentEmail = async (email, appointmentDetails, pdfBuffer) => {
     try {
-
         if (!pdfBuffer || pdfBuffer.length === 0) {
             throw new Error("❌ PDF Buffer is empty or undefined!");
         }
@@ -81,7 +80,7 @@ export const sendAppointmentEmail = async (email, appointmentDetails) => {
                     content: pdfBuffer, // Ensure proper passing of the buffer
                     contentType: "application/pdf",
                 },
-            ],  
+            ],
         };
 
         const info = await transporter.sendMail(mailOptions);
@@ -90,7 +89,6 @@ export const sendAppointmentEmail = async (email, appointmentDetails) => {
         console.error("❌ Error sending appointment confirmation email:", error);
     }
 };
-
 
 // Send Appointment Status Update Email
 export const sendAppointmentStatusUpdateEmail = async (email, appointmentDetails, status, pdfBuffer) => {
