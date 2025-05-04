@@ -314,7 +314,7 @@ export const bookAppointment = async (req, res) => {
             Owner.findById(owner_id)
         ]);
 
-        const verifyUrl = `${process.env.FRONTEND_URL}/verify?appointmentId=${savedAppointment._id}`;
+        const verifyUrl = `${process.env.FRONTEND_URL_VERCEL}/verify?appointmentId=${savedAppointment._id}`;
         const qrCode = await generateQRCode(verifyUrl);
 
         // ✅ Generate PDF
@@ -406,7 +406,7 @@ export const bookAppointmentForClinic = async (req, res) => {
             const now = new Date();
             passedDate.setHours(now.getHours(), now.getMinutes(), now.getSeconds(), 0);
 
-            const verifyUrl = `${process.env.FRONTEND_URL}/verify?appointmentId=${savedAppointment._id}`;
+            const verifyUrl = `${process.env.FRONTEND_URL_VERCEL}/verify?appointmentId=${savedAppointment._id}`;
             const qrCode = await generateQRCode(verifyUrl);
 
             // ✅ Generate PDF
@@ -499,7 +499,7 @@ export const verifyAppointmentOTP = async (req, res) => {
         
 
         // ✅ Generate QR Code
-        const verifyUrl = `${process.env.FRONTEND_URL}/verify?appointmentId=${savedAppointment._id}`;
+        const verifyUrl = `${process.env.FRONTEND_URL_VERCEL}/verify?appointmentId=${savedAppointment._id}`;
         const qrCode = await generateQRCode(verifyUrl);
 
         // ✅ Generate PDF

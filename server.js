@@ -27,8 +27,8 @@ const app = express();
 app.use(express.json());
 
 const allowedOrigins = [
-  process.env.FRONTEND_URL,
   process.env.FRONTEND_URL_VERCEL,
+  process.env.FRONTEND_URL,
   process.env.LOCAL_URL,
 ];
 
@@ -87,7 +87,7 @@ app.get("/auth/google", passport.authenticate("google", {
 
 app.get("/auth/google/callback", passport.authenticate("google", { failureRedirect: "/auth/google/failure", session: false }), async (req, res) => {
   if (!req.user) {
-    return res.redirect(`${process.env.FRONTEND_URL}/google-auth-failure?message=Authentication failed`);
+    return res.redirect(`${process.env.FRONTEND_URL_VERCEL_VERCEL}/google-auth-failure?message=Authentication failed`);
   }
 
   try {
@@ -105,16 +105,16 @@ app.get("/auth/google/callback", passport.authenticate("google", { failureRedire
       { expiresIn: "1h" }
     );
 
-    res.redirect(`${process.env.FRONTEND_URL}/google-auth-success?token=${encodeURIComponent(token)}`);
+    res.redirect(`${process.env.FRONTEND_URL_VERCEL}/google-auth-success?token=${encodeURIComponent(token)}`);
   } catch (error) {
     console.error("Google Auth Error:", error);
-    res.redirect(`${process.env.FRONTEND_URL}/google-auth-failure?message=Server error`);
+    res.redirect(`${process.env.FRONTEND_URL_VERCEL}/google-auth-failure?message=Server error`);
   }
 });
 
 // Google Auth Failure Route
 app.get("/auth/google/failure", (req, res) => {
-  res.redirect(`${process.env.FRONTEND_URL}/login?message=This email was registered manually. Please use email and password.`);
+  res.redirect(`${process.env.FRONTEND_URL_VERCEL}/login?message=This email was registered manually. Please use email and password.`);
 });
 
 // Error Handling Middleware
