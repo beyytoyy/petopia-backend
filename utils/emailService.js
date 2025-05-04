@@ -52,6 +52,12 @@ export const sendOTPEmail = async (email, otp) => {
 export const sendAppointmentEmail = async (email, appointmentDetails) => {
     try {
 
+        if (!pdfBuffer || pdfBuffer.length === 0) {
+            throw new Error("❌ PDF Buffer is empty or undefined!");
+        }
+
+        console.log("📩 Sending email with PDF attachment, size:", pdfBuffer.length, "bytes");
+
         const mailOptions = {
             from: process.env.EMAIL_USER,
             to: email,
@@ -69,6 +75,13 @@ export const sendAppointmentEmail = async (email, appointmentDetails) => {
                 <hr>
                 <p style="font-size: 12px; color: gray;">This is an automated message from Petopia. Please do not reply to this email.</p>
             `,
+            attachments: [
+                {
+                    filename: `appointment-${appointmentDetails.appointmentId}.pdf`,
+                    content: pdfBuffer, // Ensure proper passing of the buffer
+                    contentType: "application/pdf",
+                },
+            ],  
         };
 
         const info = await transporter.sendMail(mailOptions);
@@ -153,15 +166,6 @@ export const sendAppointmentStatusUpdateEmail = async (email, appointmentDetails
                         <p style="font-size: 12px; color: gray;">This is an automated message from Petopia. Please do not reply to this email.</p>
                     </div>
                 `;
-
-                // Attach PDF only for "Completed" status
-                if (pdfBuffer) {
-                    attachments.push({
-                        filename: `appointment-${appointmentDetails.appointmentId}.pdf`,
-                        content: pdfBuffer,
-                        contentType: "application/pdf",
-                    });
-                }
                 break;
             case "Cancelled":
                 subject = "Appointment Cancelled - Petopia";
@@ -271,7 +275,7 @@ export const passwordResetOTPEmail = (otp) => {
             </span>
           </div>
   
-          <p style="text-align: center;">This OTP is valid for <strong>5 minutes</strong>.</p>
+          <p style="text-align: center;">This OTP is valid for <strong>5    minutes</strong>.</p>
           <p style="text-align: center;">If you didn't request a password reset, you can safely ignore this email.</p>
           
           <hr style="border: 1px solid #ddd; margin: 20px 0;">

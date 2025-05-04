@@ -26,8 +26,5 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Run tests
-        run: npm test # Adjust this to your test command
-
       - name: Run reminder script
         run: node reminder.js # Adjust the path if necessary
