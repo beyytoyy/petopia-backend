@@ -8,6 +8,7 @@ import { sendAppointmentEmail, sendOTPEmail, sendAppointmentStatusUpdateEmail, s
 import crypto from "crypto";
 import { generateQRCode, createPDF } from "../utils/pdfService.js";
 import mongoose from "mongoose";
+import moment from "moment-timezone";
 
 
 export const getAppointments = async (req, res) => {
@@ -607,12 +608,15 @@ export const updateAppointment = async (req, res) => {
 
         // Update date & time together (single date field)
         if (date) {
-            const updatedDate = new Date(date);
+            // Convert the ISO string into a local date (Asia/Manila)
+            const updatedDate = moment.tz(date, "Asia/Manila").toDate();
+        
             if (time) {
                 const [hours, minutes] = time.split(":").map(Number);
                 updatedDate.setHours(hours);
                 updatedDate.setMinutes(minutes);
             }
+        
             updateData.date = updatedDate;
         }
 
