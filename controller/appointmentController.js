@@ -558,19 +558,18 @@ export const updateAppointment = async (req, res) => {
                     updateData.rejectedAt = null;
                     updateData.confirmedAt = null;
 
-                    // If status is completed, update the pet's medical history
-                    const appointment = await Appointment.findById(id).populate("pet_id");
+                    const appointment = await Appointment.findById(id);
                     if (!appointment) {
                         return res.status(404).json({ message: "Appointment not found" });
                     }
 
-                    const petId = appointment.pet_id._id; // Get the pet ID
-                    if (medical_concern) {
-                        // Update the pet's medical history
-                        await Pet.findByIdAndUpdate(petId, {
-                            $addToSet: { medical_history: medical_concern } // Use $addToSet to avoid duplicates
+                    // Only update medical history if it's a registered pet
+                    if (appointment.pet_id && !appointment.guest_id && medical_concern) {
+                        await Pet.findByIdAndUpdate(appointment.pet_id, {
+                            $addToSet: { medical_history: medical_concern.trim() }
                         });
                     }
+
                     break;
 
                 case "cancelled":
@@ -703,14 +702,20 @@ export const updateAppointment = async (req, res) => {
 
 
 export const deleteAppointment = async (req, res) => {
+    const { id } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(400).json({ message: "Invalid appointment ID" });
+    }
+
     try {
-        const { id } = req.params;
         const deletedAppointment = await Appointment.findByIdAndDelete(id);
 
         if (!deletedAppointment) {
             return res.status(404).json({ message: "Appointment not found" });
         }
 
+        console.log(`✅ Appointment with ID ${id} successfully deleted.`);
         res.status(204).send();
     } catch (error) {
         console.error("Error deleting appointment:", error);
