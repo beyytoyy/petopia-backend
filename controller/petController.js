@@ -105,45 +105,38 @@ export const deletePet = async (req, res) => {
 };
 
 export const updatePet = async (req, res) => {
-  const { petId } = req.params; // Get petId from URL parameters
-  const updates = req.body; // Get the updates from the request body
+  const { petId } = req.params;
+  const updates = req.body;
 
-  // Validate the petId
+  // Validate petId
   if (!petId || !mongoose.Types.ObjectId.isValid(petId)) {
-      return res.status(400).json({ message: "Invalid or missing pet ID" });
+    return res.status(400).json({ message: 'Invalid or missing pet ID' });
   }
 
   try {
-      // Check if the pet exists
-      const pet = await Pet.findById(petId);
-      if (!pet) {
-          return res.status(404).json({ message: "Pet not found" });
-      }
-
-      if (updates.medical_history) {
-        // Ensure medical_history is an array
-        if (!Array.isArray(pet.medical_history)) {
-            pet.medical_history = []; // Initialize as an empty array if not already
-        }
-        // Append the new medical history
-        pet.medical_history.push(updates.medical_history); // Add the new medical concern
-        // Save the updated pet with the new medical_history
-        await pet.save(); // Save the updated pet with the new medical_history
+    const pet = await Pet.findById(petId);
+    if (!pet) {
+      return res.status(404).json({ message: 'Pet not found' });
     }
 
-      // Update the pet with the new data (excluding medical_history)
-      const { medical_history, ...otherUpdates } = updates; // Exclude medical_history from updates
-      const updatedPet = await Pet.findByIdAndUpdate(petId, otherUpdates, { new: true });
+    // Conditionally update medical_history only if it's provided
+    if (updates.medical_history !== undefined) {
+      const newHistory = Array.isArray(updates.medical_history)
+        ? updates.medical_history
+        : [updates.medical_history];
 
-      // Save the updated pet with the new medical_history if it was updated
-      if (updates.medical_history) {
-          await updatedPet.save(); // Save the updated pet with the new medical_history
-      }
+      pet.medical_history.push(...newHistory);
+    }
 
-      res.status(200).json(updatedPet);
+    // Update other fields (excluding medical_history)
+    const { medical_history, ...otherUpdates } = updates;
+    Object.assign(pet, otherUpdates);
+
+    const updatedPet = await pet.save();
+    res.status(200).json(updatedPet);
   } catch (error) {
-      console.error("Error updating pet:", error);
-      res.status(500).json({ message: error.message });
+    console.error('Error updating pet:', error);
+    res.status(500).json({ message: error.message });
   }
 };
 
