@@ -119,13 +119,21 @@ export const updatePet = async (req, res) => {
       return res.status(404).json({ message: 'Pet not found' });
     }
 
-    // Conditionally update medical_history only if it's provided
+    // Handle medical_history only if present in request
     if (updates.medical_history !== undefined) {
       const newHistory = Array.isArray(updates.medical_history)
         ? updates.medical_history
         : [updates.medical_history];
 
-      pet.medical_history.push(...newHistory);
+      // Filter out duplicates
+      const uniqueNewHistory = newHistory.filter(
+        (item) => !pet.medical_history.includes(item)
+      );
+
+      // Only push unique new entries
+      if (uniqueNewHistory.length > 0) {
+        pet.medical_history.push(...uniqueNewHistory);
+      }
     }
 
     // Update other fields (excluding medical_history)
