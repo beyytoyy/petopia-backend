@@ -380,7 +380,7 @@ export const bookAppointmentForClinic = async (req, res) => {
             vet_id,
             notes,
             isVerified: true, 
-            status: "Confirmed", 
+            status: "Pending", 
             medical_concern: medicalConcern,
         });
 
