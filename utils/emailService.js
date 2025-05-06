@@ -65,7 +65,15 @@ export const sendAppointmentEmail = async (email, appointmentDetails, pdfBuffer)
                 <h2>Appointment Confirmation</h2>
                 <p>Thank you ${appointmentDetails.firstName || "Valued Customer"} for booking an appointment at <strong>${appointmentDetails.clinicName}</strong>!</p>
                 <p><strong>Appointment ID:</strong> ${appointmentDetails.appointmentId}</p>
-                <p><strong>Date:</strong> ${new Date(appointmentDetails.date).toLocaleString()}</p>
+                <p><strong>Date:</strong> ${new Date(appointmentDetails.date).toLocaleString('en-US', {
+                    timeZone: 'Asia/Manila',
+                    year: 'numeric',
+                    month: 'short',
+                    day: '2-digit',
+                    hour: 'numeric',
+                    minute: '2-digit',
+                    hour12: true,
+                  })}</p>
                 <p><strong>Service:</strong> ${appointmentDetails.serviceName}</p>
                 <p><strong>Pet Name:</strong> ${appointmentDetails.petName}</p>
                 <p><strong>Clinic Address:</strong> ${appointmentDetails.clinicAddress}</p>
@@ -104,7 +112,15 @@ export const sendAppointmentStatusUpdateEmail = async (email, appointmentDetails
                 message = `
                     <h2>Your Service is Confirmed!</h2>
                     <p>Thank you ${appointmentDetails.firstName || "Valued Customer"} for booking an appointment at <strong>${appointmentDetails.clinicName}</strong>!</p>
-                    <p><strong>Date:</strong> ${new Date(appointmentDetails.date).toLocaleString()}</p>
+                    <p><strong>Date:</strong> ${new Date(appointmentDetails.date).toLocaleString('en-US', {
+                        timeZone: 'Asia/Manila',
+                        year: 'numeric',
+                        month: 'short',
+                        day: '2-digit',
+                        hour: 'numeric',
+                        minute: '2-digit',
+                        hour12: true,
+                      })}</p>
                     <p><strong>Service:</strong> ${appointmentDetails.serviceName}</p>
                     <p><strong>Pet Name:</strong> ${appointmentDetails.petName}</p>
                     <p>We look forward to seeing you and your furry friend!</p>
@@ -125,7 +141,15 @@ export const sendAppointmentStatusUpdateEmail = async (email, appointmentDetails
                         <table style="width: 100%; border-collapse: collapse;">
                             <tr>
                                 <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Date & Time:</strong></td>
-                                <td style="padding: 8px; border-bottom: 1px solid #ddd;">${new Date(appointmentDetails.date).toLocaleString()}</td>
+                                <td style="padding: 8px; border-bottom: 1px solid #ddd;">${new Date(appointmentDetails.date).toLocaleString('en-US', {
+                                    timeZone: 'Asia/Manila',
+                                    year: 'numeric',
+                                    month: 'short',
+                                    day: '2-digit',
+                                    hour: 'numeric',
+                                    minute: '2-digit',
+                                    hour12: true,
+                                  })}</td>
                             </tr>
                             <tr>
                                 <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Service:</strong></td>
@@ -170,7 +194,15 @@ export const sendAppointmentStatusUpdateEmail = async (email, appointmentDetails
                 message = `
                     <h2>Your Appointment has been Cancelled</h2>
                     <p>We're sorry to inform you that your appointment at <strong>${appointmentDetails.clinicName}</strong> has been cancelled.</p>
-                    <p><strong>Date:</strong> ${new Date(appointmentDetails.date).toLocaleString()}</p>
+                    <p><strong>Date:</strong> ${new Date(appointmentDetails.date).toLocaleString('en-US', {
+                        timeZone: 'Asia/Manila',
+                        year: 'numeric',
+                        month: 'short',
+                        day: '2-digit',
+                        hour: 'numeric',
+                        minute: '2-digit',
+                        hour12: true,
+                      })}</p>
                     <p><strong>Service:</strong> ${appointmentDetails.serviceName}</p>
                     <p><strong>Pet Name:</strong> ${appointmentDetails.petName}</p>
                     <p>If you have any questions, please contact us.</p>
@@ -183,7 +215,15 @@ export const sendAppointmentStatusUpdateEmail = async (email, appointmentDetails
                 message = `
                     <h2>Service is Currently In progress!</h2>
                     <p>Thank you for your patience while we take care of your furry friend at <strong>${appointmentDetails.clinicName}</strong>.</p>
-                    <p><strong>Date:</strong> ${new Date(appointmentDetails.date).toLocaleString()}</p>
+                    <p><strong>Date:</strong> ${new Date(appointmentDetails.date).toLocaleString('en-US', {
+                        timeZone: 'Asia/Manila',
+                        year: 'numeric',
+                        month: 'short',
+                        day: '2-digit',
+                        hour: 'numeric',
+                        minute: '2-digit',
+                        hour12: true,
+                      })}</p>
                     <p><strong>Service:</strong> ${appointmentDetails.serviceName}</p>
                     <p><strong>Pet Name:</strong> ${appointmentDetails.petName}</p>
                     <p>We will keep you updated on the progress!</p>
@@ -196,7 +236,15 @@ export const sendAppointmentStatusUpdateEmail = async (email, appointmentDetails
                 message = `
                     <h2>Your Pet is Ready for Pickup!</h2>
                     <p>Your furry friend is ready to go home from <strong>${appointmentDetails.clinicName}</strong>!</p>
-                    <p><strong>Date:</strong> ${new Date(appointmentDetails.date).toLocaleString()}</p>
+                    <p><strong>Date:</strong> ${new Date(appointmentDetails.date).toLocaleString('en-US', {
+                        timeZone: 'Asia/Manila',
+                        year: 'numeric',
+                        month: 'short',
+                        day: '2-digit',
+                        hour: 'numeric',
+                        minute: '2-digit',
+                        hour12: true,
+                      })}</p>
                     <p><strong>Service:</strong> ${appointmentDetails.serviceName}</p>
                     <p><strong>Pet Name:</strong> ${appointmentDetails.petName}</p>
                     <p>Please come to pick them up at your earliest convenience.</p>
@@ -236,7 +284,15 @@ export const sendFollowUpEmailToClinic = async (clinicEmail, appointmentDetails,
                 <p><strong>Owner Name:</strong> ${appointmentDetails.firstName} ${appointmentDetails.lastName}</p>
                 <p><strong>Pet Name:</strong> ${appointmentDetails.petName}</p>
                 <p><strong>Service:</strong> ${appointmentDetails.serviceName}</p>
-                <p><strong>Follow-Up Date:</strong> ${new Date(appointmentDetails.followUpDate).toLocaleString()}</p>
+                <p><strong>Follow-Up Date:</strong> ${new Date(appointmentDetails.date).toLocaleString('en-US', {
+                    timeZone: 'Asia/Manila',
+                    year: 'numeric',
+                    month: 'short',
+                    day: '2-digit',
+                    hour: 'numeric',
+                    minute: '2-digit',
+                    hour12: true,
+                  })}</p>
                 <p><strong>Medical Concern:</strong> ${appointmentDetails.medicalConcern || "No medical concern."}</p>
                 <p><strong>Notes:</strong> ${appointmentDetails.notes || "No additional notes provided."}</p>
                 <p>Thank you for providing excellent care to our furry friends!</p>

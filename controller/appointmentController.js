@@ -9,6 +9,7 @@ import crypto from "crypto";
 import { generateQRCode, createPDF } from "../utils/pdfService.js";
 import mongoose from "mongoose";
 import moment from "moment-timezone";
+import passport from "passport";
 
 
 export const getAppointments = async (req, res) => {
@@ -298,8 +299,6 @@ export const bookAppointment = async (req, res) => {
             petId = savedPet._id; // ✅ Use newly created pet's ID
             console.log("🆕 New pet created, petId:", petId);
         }
-
-        // ✅ Create Appointment
         const passedDate = new Date(date);
         const now = new Date();
         passedDate.setHours(now.getHours(), now.getMinutes(), now.getSeconds(), 0);
@@ -323,7 +322,15 @@ export const bookAppointment = async (req, res) => {
             appointmentId: savedAppointment._id,
             clinicName: clinic?.name || "Your Clinic Name",
             clinicAddress: clinic?.address || "Your Address",
-            date: new Date(passedDate).toLocaleString(),
+            date: new Date(passedDate).toLocaleString('en-PH', {
+                timeZone: 'Asia/Manila',
+                year: 'numeric',
+                month: 'short',
+                day: '2-digit',
+                hour: 'numeric',
+                minute: '2-digit',
+                hour12: true
+              }),
             serviceName: service?.name || "Your Service Name",
             petName: petName,
             petType: petType,
@@ -337,7 +344,15 @@ export const bookAppointment = async (req, res) => {
             appointmentId: savedAppointment._id,
             clinicName: clinic?.name || "Your Clinic Name",
             clinicAddress: clinic?.address || "Your Address",
-            date: new Date(passedDate).toLocaleString(),
+            date: new Date(passedDate).toLocaleString('en-PH', {
+                timeZone: 'Asia/Manila',
+                year: 'numeric',
+                month: 'short',
+                day: '2-digit',
+                hour: 'numeric',
+                minute: '2-digit',
+                hour12: true
+              }),
             serviceName: service?.name || "Your Service Name",
             petName: petName,
             petType: petType,
@@ -377,7 +392,15 @@ export const bookAppointmentForClinic = async (req, res) => {
             pet_id,
             clinic_id,
             service_id,
-            date: rawDate,
+            date: new Date(rawDate).toLocaleString('en-PH', {
+                timeZone: 'Asia/Manila',
+                year: 'numeric',
+                month: 'short',
+                day: '2-digit',
+                hour: 'numeric',
+                minute: '2-digit',
+                hour12: true
+              }),
             vet_id,
             notes,
             isVerified: true, 
@@ -415,7 +438,15 @@ export const bookAppointmentForClinic = async (req, res) => {
                 appointmentId: savedAppointment._id,
                 clinicName: clinic?.name || "Your Clinic Name",
                 clinicAddress: clinic?.address || "Your Address",
-                date: new Date(passedDate).toLocaleString(),
+                date: new Date(passedDate).toLocaleString('en-PH', {
+                    timeZone: 'Asia/Manila',
+                    year: 'numeric',
+                    month: 'short',
+                    day: '2-digit',
+                    hour: 'numeric',
+                    minute: '2-digit',
+                    hour12: true
+                  }),
                 serviceName: service?.name || "Your Service Name",
                 petName: pet?.name,
                 petType: pet?.type,
@@ -432,7 +463,15 @@ export const bookAppointmentForClinic = async (req, res) => {
                 lastName: owner?.lastname || "Unknown",
                 petName: pet?.name || "Your Pet",
                 serviceName: service?.name || "Your Service Name",
-                followUpDate: followUpDate.toLocaleString(),
+                followUpDate: new Date(followUpDate).toLocaleString('en-PH', {
+                    timeZone: 'Asia/Manila',
+                    year: 'numeric',
+                    month: 'short',
+                    day: '2-digit',
+                    hour: 'numeric',
+                    minute: '2-digit',
+                    hour12: true
+                  }),
                 notes: notes || "No additional notes provided.",
                 medicalConcern: savedAppointment.medical_concern || "No medical concern"
             }, pdfBuffer);
@@ -480,7 +519,15 @@ export const verifyAppointmentOTP = async (req, res) => {
         // Create a new appointment linked to the guest
         const newAppointment = new Appointment({
             clinic_id: pendingAppointment.clinic_id,
-            date: new Date(passedDate).toLocaleDateString(),
+            date: new Date(passedDate).toLocaleString('en-PH', {
+                timeZone: 'Asia/Manila',
+                year: 'numeric',
+                month: 'short',
+                day: '2-digit',
+                hour: 'numeric',
+                minute: '2-digit',
+                hour12: true
+              }),              
             guest_id: newGuest._id, // Link to the guest
             pet_id: newGuest.pets[0]._id, // Assuming you want to link the first pet
             service_id: pendingAppointment.service_id,
@@ -508,7 +555,15 @@ export const verifyAppointmentOTP = async (req, res) => {
             appointmentId: savedAppointment._id,
             clinicName: clinic?.name || "Your Clinic Name",
             clinicAddress: clinic?.address || "Your Address",
-            date: new Date(passedDate).toLocaleString(),
+            date: new Date(passedDate).toLocaleString('en-PH', {
+                timeZone: 'Asia/Manila',
+                year: 'numeric',
+                month: 'short',
+                day: '2-digit',
+                hour: 'numeric',
+                minute: '2-digit',
+                hour12: true
+              }),
             serviceName: service?.name || "Your Service Name",
             petName: pendingAppointment.pet.name,  // ✅ From pendingAppointment
             petType: pendingAppointment.pet.type,  // ✅ From pendingAppointment
@@ -522,7 +577,15 @@ export const verifyAppointmentOTP = async (req, res) => {
             appointmentId: savedAppointment._id,
             clinicName: clinic?.name || "Your Clinic Name",
             clinicAddress: clinic?.address || "Your Address",
-            date: new Date(passedDate).toLocaleString(),
+            date: new Date(passedDate).toLocaleString('en-PH', {
+                timeZone: 'Asia/Manila',
+                year: 'numeric',
+                month: 'short',
+                day: '2-digit',
+                hour: 'numeric',
+                minute: '2-digit',
+                hour12: true
+              }),
             serviceName: service?.name || "Your Service Name",
             petName: pendingAppointment.pet.name,
             petType: pendingAppointment.pet.type,
@@ -606,18 +669,17 @@ export const updateAppointment = async (req, res) => {
             updateData.notes = notes;
         }
 
-        // Update date & time together (single date field)
         if (date) {
-            // Convert the ISO string into a local date (Asia/Manila)
-            const updatedDate = moment.tz(date, "Asia/Manila").toDate();
+            let updatedDate = moment.tz(date, "Asia/Manila");
         
-            if (time) {
+            if (time && /^\d{1,2}:\d{2}$/.test(time)) {
                 const [hours, minutes] = time.split(":").map(Number);
-                updatedDate.setHours(hours);
-                updatedDate.setMinutes(minutes);
+                if (!isNaN(hours) && !isNaN(minutes)) {
+                    updatedDate = updatedDate.set({ hour: hours, minute: minutes, second: 0 });
+                }
             }
         
-            updateData.date = updatedDate;
+            updateData.date = updatedDate.toDate();
         }
 
         // Update price if provided
@@ -646,7 +708,15 @@ export const updateAppointment = async (req, res) => {
         if (updatedAppointment.owner_id) {
             emailDetails = {
                 clinicName: updatedAppointment.clinic_id?.name || "Unknown Clinic",
-                date: updatedAppointment.date.toLocaleString(),
+                date: updatedAppointment.date.toLocaleString('en-PH', {
+                    timeZone: 'Asia/Manila',
+                    year: 'numeric',
+                    month: 'short',
+                    day: '2-digit',
+                    hour: 'numeric',
+                    minute: '2-digit',
+                    hour12: true
+                }),
                 serviceName: updatedAppointment.service_id?.name || "Unknown Service",
                 petName: updatedAppointment.pet_id?.name || "Your Pet",
                 firstName: updatedAppointment.owner_id.firstname || "Valued Customer",
@@ -660,7 +730,15 @@ export const updateAppointment = async (req, res) => {
         } else if (updatedAppointment.guest_id) {
             emailDetails = {
                 clinicName: updatedAppointment.clinic_id?.name || "Unknown Clinic",
-                date: updatedAppointment.date.toLocaleString(),
+                date: updatedAppointment.date.toLocaleString('en-PH', {
+                    timeZone: 'Asia/Manila',
+                    year: 'numeric',
+                    month: 'short',
+                    day: '2-digit',
+                    hour: 'numeric',
+                    minute: '2-digit',
+                    hour12: true
+                }),
                 serviceName: updatedAppointment.service_id?. name || "Unknown Service",
                 petName: updatedAppointment.pet_id?.name || updatedAppointment.guest_id?.pets[0]?.name || "Your Pet",
                 firstName: updatedAppointment.guest_id?.firstName || "Valued Guest",
