@@ -58,7 +58,7 @@ export const getAppointmentById = async (req, res) => {
             .populate("owner_id", "firstname lastname email")
             .populate("guest_id", "firstName lastName email phone pets")
             .populate("pet_id", "name type breed age gender avatar, medical_history")
-            .populate("clinic_id", "name")
+            .populate("clinic_id", "name logo address")
             .populate("service_id", "name");
 
         if (!appointment) {
@@ -102,7 +102,7 @@ export const getAppointmentsByOwner = async (req, res) => {
         const appointments = await Appointment.find({ owner_id: ownerId })
             .populate('owner_id', 'firstname lastname email') // Populate owner details
             .populate("pet_id", "name type breed age gender avatar, medical_history")
-            .populate('clinic_id', 'name') // Populate clinic details
+            .populate('clinic_id', 'name address logo') // Populate clinic details
             .populate('service_id', 'name'); // Populate service details
 
         if (!appointments || appointments.length === 0) {
