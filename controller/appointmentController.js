@@ -18,7 +18,7 @@ export const getAppointments = async (req, res) => {
             .populate("owner_id", "firstname lastname email")
             .populate("guest_id", "firstName lastName email phone pets")
             .populate("pet_id", "name type breed age gender avatar, medical_history")
-            .populate("clinic_id", "name")
+            .populate("clinic_id", "name logo address")
             .populate("service_id", "name")
             .sort({ date: -1 });
 
@@ -751,7 +751,7 @@ export const updateAppointment = async (req, res) => {
             recipientEmail = updatedAppointment.guest_id?.email;
         }
 
-        // Generate PDF for completed appointments
+        // Generate PDF for comp    leted appointments
         let pdfBuffer = null;
         if (status === "completed") {
             pdfBuffer = await generateAppointmentPDF(updatedAppointment);
