@@ -18,7 +18,7 @@ export const getAppointments = async (req, res) => {
             .populate("owner_id", "firstname lastname email")
             .populate("guest_id", "firstName lastName email phone pets")
             .populate("pet_id", "name type breed age gender avatar, medical_history")
-            .populate("clinic_id", "name logo address")
+            .populate("clinic_id", "name logo address contact_number email open_time close_time status description days")
             .populate("service_id", "name")
             .sort({ date: -1 });
 
@@ -58,7 +58,7 @@ export const getAppointmentById = async (req, res) => {
             .populate("owner_id", "firstname lastname email")
             .populate("guest_id", "firstName lastName email phone pets")
             .populate("pet_id", "name type breed age gender avatar, medical_history")
-            .populate("clinic_id", "name logo address")
+            .populate("clinic_id", "name logo address contact_number email open_time close_time status description days")
             .populate("service_id", "name");
 
         if (!appointment) {
